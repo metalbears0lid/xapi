@@ -20,8 +20,8 @@ class ProdConfig(GlobalConfig):
     model_config = SettingsConfigDict(env_prefix='PROD_')
     
 class TestConfig(GlobalConfig):
-    DATABASE_URL = 'sqlite:///test.db'
-    DB_FORCE_ROLL_BACK = True
+    DATABASE_URL: str = 'sqlite:///test.db'
+    DB_FORCE_ROLL_BACK: bool = True
 
     model_config = SettingsConfigDict(env_prefix='TEST_')
 

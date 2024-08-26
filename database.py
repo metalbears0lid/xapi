@@ -1,6 +1,6 @@
 import databases
 import sqlalchemy
-from config import config
+from xapi.config import config
 
 # metadata stores info about tables/columns
 metadata = sqlalchemy.MetaData()
