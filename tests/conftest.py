@@ -1,13 +1,14 @@
-# fixtures are ways to share data between multiple tests
-
+import os
 from typing import AsyncGenerator, Generator
 
 import pytest
 from fastapi.testclient import TestClient
-from httpx import ASGITransport, AsyncClient
+from httpx import AsyncClient
 
-from xapi.main import app
-from xapi.routers.post import comment_table, post_table
+os.environ['ENV_STATE'] = 'test'
+
+from xapi.main import app   # noqa: E402
+from xapi.database import database  # noqa: E402
 
 
 @pytest.fixture(scope='session')
@@ -20,12 +21,11 @@ def client() -> Generator:
 
 @pytest.fixture(autouse=True)
 async def db() -> AsyncGenerator:
-    post_table.clear()
-    comment_table.clear()
+    await database.connect()
     yield
+    await database.disconnect()
 
-# client will be evaluated via fixture and injected into the function (dependency injection)
 @pytest.fixture()
 async def async_client(client) -> AsyncGenerator:
-    async with AsyncClient(transport=ASGITransport(app=app), base_url=client.base_url) as ac:
+    async with AsyncClient(app=app, base_url=client.base_url) as ac:
         yield ac
